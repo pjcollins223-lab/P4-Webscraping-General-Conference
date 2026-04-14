@@ -8,6 +8,7 @@ import pandas as pd
 import sqlalchemy
 import matplotlib.pyplot as plot
 import webscraping
+import database
 
 
 # placeholder for Porter
