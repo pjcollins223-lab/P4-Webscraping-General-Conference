@@ -7,7 +7,7 @@ from sqlalchemy import create_engine, text
 
 #database connection (password should be changed depending on who's using it)
 DB_USER = "postgres"
-DB_PASSWORD = "12345"   
+DB_PASSWORD = "12345"  # CHANGE THIS TO YOUR OWN PASSWORD
 DB_HOST = "localhost"
 DB_PORT = "5432"
 DB_NAME = "is303"
