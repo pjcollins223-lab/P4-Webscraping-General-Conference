@@ -18,7 +18,7 @@ def process_talk(url, standard_works_dict):
 
     # Kicker
     kicker_tag = soup.find('p', class_='kicker')
-    kicker = kicker_tag.text.strip().replace('\xa0', ' ')
+    kicker = kicker_tag.text.strip().replace('\xa0', ' ') if kicker_tag else ""
 
     # Footnotes
     footnotes_section = soup.find('footer', class_='notes')
@@ -26,6 +26,7 @@ def process_talk(url, standard_works_dict):
 
     # Copy dictionary
     talk_data = standard_works_dict.copy()
+
 
     # Count references
     for book in talk_data:

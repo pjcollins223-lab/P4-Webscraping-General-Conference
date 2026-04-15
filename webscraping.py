@@ -3,7 +3,9 @@
 
 from bs4 import BeautifulSoup
 import requests
-import main
+import process_talk
+import database
+
 
 # get valid talk links from the church website
 def get_talk_urls() :
@@ -32,7 +34,7 @@ def get_talk_urls() :
     return talk_urls
 
 # retrieves talk urls from get_talk_urls and loops through the titles. If valid, pass it to process_talk
-def loop_through_talks():
+def loop_through_talks(standard_works_dict):
     urls = get_talk_urls()
 
     for url in urls:
@@ -49,8 +51,10 @@ def loop_through_talks():
             # filter out anything marked as business
             if content_type == "general-conference-business":
                 print("Business, not a talk. Skipping...")
+                continue
                 
             # real talks
             if content_type == "general-conference-talk":
-                print(content_type)
-                main.process_talk(url)
+                talk_data = process_talk.process_talk(url, standard_works_dict)
+                database.save_to_db(talk_data)
+                
