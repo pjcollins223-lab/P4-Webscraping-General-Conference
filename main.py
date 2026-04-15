@@ -55,95 +55,90 @@ def scrape_and_save():
 
  
 def show_summaries():
-    sub_choice = input(
-        "\nYou selected to see summaries. "
-        "Enter 1 to see a summary of all talks. "
-        "Enter 2 to select a specific talk. "
-        "Enter anything else to exit: "
-    )
- 
-    # --- 2.1  Chart across ALL talks ---
-    if sub_choice == "1":
-        df = database.load_all_data()
-        if df is None:
-            return
- 
-        # Drop the three text columns so only reference counts remain,
-        # then sum every book column across all talks.
-        # Keep only books cited more than twice.
-        df_refs = df.drop(columns=["Speaker_Name", "Talk_Name", "Kicker"])
-        ref_totals = df_refs.sum()
-        ref_totals = ref_totals[ref_totals > 2]
- 
-        plt.figure(figsize=(14, 6))
-        ref_totals.plot(kind="bar")
-        plt.title("Standard Works Referenced in General Conference")
-        plt.xlabel("Standard Works Books")
-        plt.ylabel("# Times Referenced")
-        plt.xticks(rotation=45, ha="right")
-        plt.tight_layout()
-        plt.show()
+    while True:
+        sub_choice = input(
+            "\nYou selected to see summaries.\n "
+            "Enter 1 to see a summary of all talks.\n "
+            "Enter 2 to select a specific talk.\n "
+            "Enter anything else to exit: "
+        )
 
-    elif sub_choice == "2":
-        talks = database.get_talk_list()
-        if talks is None:
-            return
- 
-        # Print a numbered list of every talk
-        print("\nThe following are the names of speakers and their talks:")
-        talk_lookup = {}  # maps display number → integer index in the DB
- 
-        for i, (idx, row) in enumerate(talks.iterrows(), start=1):
-            print(f"{i}: {row['Speaker_Name']} - {row['Talk_Name']}")
-            talk_lookup[i] = idx   # idx is the DataFrame index (row position)
- 
-        # Ask the user to pick one
-        try:
-            talk_num = int(input("\nPlease enter the number of the talk you want to see summarized: "))
-            db_index = talk_lookup[talk_num]
-        except (ValueError, KeyError):
-            print("Invalid selection.")
-            return
- 
-  
-        talk_row = database.get_single_talk(db_index)
-        if talk_row is None:
-            return
- 
-        talk_name = talk_row["Talk_Name"]
- 
+        if sub_choice == "1":
+            df = database.load_all_data()
+            if df is None:
+                return
 
-        talk_refs = talk_row.drop(labels=["Speaker_Name", "Talk_Name", "Kicker"])
-        talk_refs = talk_refs[talk_refs > 0]
- 
-        plt.figure(figsize=(12, 6))
-        talk_refs.plot(kind="bar")
-        plt.title(f"Standard Works Referenced in: {talk_name}")
-        plt.xlabel("Standard Works Books")
-        plt.ylabel("# Times Referenced")
-        plt.xticks(rotation=45, ha="right")
-        plt.tight_layout()
-        plt.show()
- 
-    else:
-        print("Closing the program.")
+            df_refs = df.drop(columns=["Speaker_Name", "Talk_Name", "Kicker"])
+            ref_totals = df_refs.sum()
+            ref_totals = ref_totals[ref_totals > 2]
+
+            plt.figure(figsize=(14, 6))
+            ref_totals.plot(kind="bar")
+            plt.title("Standard Works Referenced in General Conference")
+            plt.xlabel("Standard Works Books")
+            plt.ylabel("# Times Referenced")
+            plt.xticks(rotation=45, ha="right")
+            plt.tight_layout()
+            plt.show()
+
+        elif sub_choice == "2":
+            talks = database.get_talk_list()
+            if talks is None:
+                return
+
+            print("\nThe following are the names of speakers and their talks:")
+            talk_lookup = {}
+
+            for i, (idx, row) in enumerate(talks.iterrows(), start=1):
+                print(f"{i}: {row['Speaker_Name']} - {row['Talk_Name']}")
+                talk_lookup[i] = idx
+
+            try:
+                talk_num = int(input("\nPlease enter the number of the talk you want to see summarized: "))
+                db_index = talk_lookup[talk_num]
+            except (ValueError, KeyError):
+                print("Invalid selection.")
+                continue  # Loop back to sub-menu instead of returning
+
+            talk_row = database.get_single_talk(db_index)
+            if talk_row is None:
+                return
+
+            talk_name = talk_row["Talk_Name"]
+            talk_refs = talk_row.drop(labels=["Speaker_Name", "Talk_Name", "Kicker"])
+            talk_refs = talk_refs[talk_refs > 0]
+
+            plt.figure(figsize=(12, 6))
+            talk_refs.plot(kind="bar")
+            plt.title(f"Standard Works Referenced in: {talk_name}")
+            plt.xlabel("Standard Works Books")
+            plt.ylabel("# Times Referenced")
+            plt.xticks(rotation=45, ha="right")
+            plt.tight_layout()
+            plt.show()
+
+        else:
+            print("Returning to main menu.")
+            break  # Exit the sub-menu loop, return to main menu
  
  
 # Main menu
 
 def main():
-    choice = input(
-        "If you want to scrape data, enter 1. "
-        "If you want to see summaries of stored data, enter 2. "
-        "Enter any other value to exit the program: "
-    )
- 
-    if choice == "1":
-        scrape_and_save()
-    elif choice == "2":
-        show_summaries()
-    else:
-        print("Closing the program.")
+    while True:
+        choice = input(
+            "\nIf you want to scrape data, enter 1. "
+            "If you want to see summaries of stored data, enter 2. "
+            "Enter any other value to exit the program: "
+        )
+
+        if choice == "1":
+            scrape_and_save()
+        elif choice == "2":
+            show_summaries()
+        else:
+            print("Closing the program.")
+            break
  
  
 
