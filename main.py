@@ -1,6 +1,9 @@
 # Main branch for the P4 General Conference Webscrape. 
 # Porter Collins, Sarah Walker, Jason Marks, and Juliana Merkley
 
+
+# main.py done by Jason Marks
+
 # This is the entry point for the program. It handles:
 #   - The main menu (scrape or view summaries)
 #   - The standard works dictionary template
